@@ -6,13 +6,10 @@ Code and data will be available soon
 
 ## Citation
 ```
-@misc{abhyankar2025llmfeautomatedfeatureengineering,
-      title={LLM-FE: Automated Feature Engineering for Tabular Data with LLMs as Evolutionary Optimizers}, 
-      author={Nikhil Abhyankar and Parshin Shojaee and Chandan K. Reddy},
-      year={2025},
-      eprint={2503.14434},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2503.14434}, 
+@article{abhyankar2025llm,
+  title={LLM-FE: Automated Feature Engineering for Tabular Data with LLMs as Evolutionary Optimizers},
+  author={Abhyankar, Nikhil and Shojaee, Parshin and Reddy, Chandan K},
+  journal={arXiv preprint arXiv:2503.14434},
+  year={2025}
 }
 ```
