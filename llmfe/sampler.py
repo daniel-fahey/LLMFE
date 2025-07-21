@@ -195,7 +195,9 @@ class LocalLLM(LLM):
                     all_samples = [_extract_body(sample, config) for sample in all_samples]
                 
                 return all_samples
-            except Exception:
+            except Exception as e:
+                print(f"Local LLM call failed: {e}")
+                time.sleep(1)  # Add a small delay to avoid rapid retries
                 continue
 
 
@@ -206,26 +208,20 @@ class LocalLLM(LLM):
         for _ in range(self._samples_per_prompt):
             while True:
                 try:
-                    conn = http.client.HTTPSConnection("api.openai.com")
-                    payload = json.dumps({
-                        "max_tokens": 512,
-                        "model": config.api_model,
-                        "messages": [
-                            {
-                                "role": "user",
-                                "content": prompt
-                            }
-                        ]
-                    })
+                    # Use requests instead of http.client for better SSL handling
                     headers = {
-                        'Authorization': f"Bearer {os.environ['API_KEY']}",
-                        'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
+                        'Authorization': f"Bearer {os.environ.get('API_KEY', os.environ.get('OPENAI_API_KEY'))}",
                         'Content-Type': 'application/json'
                     }
-                    conn.request("POST", "/v1/chat/completions", payload, headers)
-                    res = conn.getresponse()
-                    data = json.loads(res.read().decode("utf-8"))
-                    response = data['choices'][0]['message']['content']
+                    payload = {
+                        "max_tokens": 512,
+                        "model": config.api_model,
+                        "messages": [{"role": "user", "content": prompt}]
+                    }
+                    resp = requests.post("https://api.openai.com/v1/chat/completions", 
+                                        json=payload, headers=headers, timeout=30)
+                    resp.raise_for_status()
+                    response = resp.json()['choices'][0]['message']['content']
                     
                     if self._trim:
                         response = _extract_body(response, config)
@@ -233,7 +229,9 @@ class LocalLLM(LLM):
                     all_samples.append(response)
                     break
 
-                except Exception:
+                except Exception as e:
+                    print(f"API call failed: {e}")
+                    time.sleep(1)  # Add a small delay to avoid rapid retries
                     continue
         
         return all_samples

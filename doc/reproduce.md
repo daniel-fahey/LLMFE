@@ -8,11 +8,14 @@ This guide provides step-by-step instructions for reproducing the results from t
 # Enter Nix development shell (provides Python, CUDA, secrets via agenix-shell)
 nix develop
 
-# Install Python dependencies
-uv sync
+# Initialize uv project (one-time setup)
+uv init --no-readme
+
+# Install Python dependencies from requirements.txt
+uv add $(cat requirements.txt | cut -d'=' -f1 | tr '\n' ' ')
 ```
 
-**Note**: The Nix flake uses `agenix-shell` to securely provide the OpenAI API key via `secrets/openai-api-key.age`. The key is automatically exported as `OPENAI_API_KEY` in the shell environment.
+**Note**: The Nix flake uses `agenix-shell` to securely provide the OpenAI API key via `secrets/openai-api-key.age`. The key is automatically exported as `OPENAI_API_KEY` in the shell environment. The encrypted secrets file must be at least staged in git for Nix to access it.
 
 ## Dataset Overview
 
@@ -161,6 +164,11 @@ Results should be evaluated on three prediction models:
 - OpenAI API key is managed via agenix-shell and loaded automatically
 - No manual key export needed when using `nix develop`
 - Key is available as `$OPENAI_API_KEY` environment variable
+
+### Known Issues & Fixes
+- **SSL Certificate Error**: Fixed by replacing `http.client` with `requests` library in `llmfe/sampler.py`
+- **API Key Environment Variable**: Code now checks both `API_KEY` and `OPENAI_API_KEY`
+- **Missing Dependencies**: Run `uv init --no-readme` and add dependencies from `requirements.txt`
 
 ### Baseline Comparisons
 To reproduce baseline comparisons, ensure:

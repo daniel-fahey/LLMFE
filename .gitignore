@@ -1,4 +1,5 @@
 .direnv/
 arXiv-2503.14434v2.tar.gz
 paper
-secrets/
+__pycache__/
+logs/

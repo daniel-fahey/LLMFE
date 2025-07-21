@@ -12,8 +12,11 @@ LLM-FE is an automated feature engineering framework that uses Large Language Mo
 # Enter development shell with all dependencies
 nix develop
 
-# Install Python dependencies with uv
-uv sync
+# Initialize uv project (one-time setup)
+uv init --no-readme
+
+# Install Python dependencies from requirements.txt
+uv add $(cat requirements.txt | cut -d'=' -f1 | tr '\n' ' ')
 ```
 
 ## Common Commands
