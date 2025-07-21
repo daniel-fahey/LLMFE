@@ -43,6 +43,8 @@
         cudaPackages.libcufft
         linuxPackages_latest.nvidiaPackages.latest
         glib
+        stdenv.cc.cc.lib
+        zlib
       ];
 
     in
@@ -54,7 +56,8 @@
 	  lib = pkgs.lib;
           installationScript = agenix-shell.lib.installationScript pkgs.system {
             secrets = {
-              openai-api-key.file = ./secrets/openai-api-key.age;
+              OPEN_API_KEY.file = ./secrets/openai-api-key.age;
+	      HF_TOKEN.file = ./secrets/hf-token.age;
             };
           };
 	in
@@ -66,6 +69,7 @@
             python3
             uv
             python3Packages.huggingface-hub
+	    rage
           ]
           ++ cudaLibs;
 
@@ -78,7 +82,6 @@
 
 	  # Load secrets using agenix-shell
 	  source ${lib.getExe installationScript}
-	  export OPENAI_API_KEY="$openai__api__key"
         '';
       };
     };

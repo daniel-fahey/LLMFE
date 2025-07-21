@@ -88,3 +88,48 @@ The reproduction demonstrates that LLM-FE's approach of using LLMs as evolutiona
 This represents a successful end-to-end reproduction of a cutting-edge machine learning research paper, from environment setup through full experimental validation.
 
 ---
+
+## 2025-07-21: Local RTX 3070 vs Cloud API Performance Comparison
+
+Following the successful cloud API reproduction, we implemented local LLM inference using Ollama with Llama 3.1 8B to test whether consumer hardware can match commercial API performance.
+
+### Hardware Setup
+- **Local**: RTX 3070 (8GB VRAM) with Ollama serving Llama 3.1:8b
+- **Cloud**: OpenAI GPT-3.5-Turbo via API
+- **Framework**: Modified LLM-FE to support both API and local inference modes
+
+### Technical Implementation
+Modified `llmfe/sampler.py` to support Ollama API format:
+- Endpoint: `http://127.0.0.1:11434/api/generate`  
+- Model: `llama3.1:8b`
+- Parameters: temperature=0.8, top_k=30, top_p=0.9, num_predict=512
+
+### Experiment Status
+**Cloud API (GPT-3.5-Turbo) - Completed:**
+- **Best Split**: 100.0% accuracy (perfect score)
+- **Average**: ~94.5% across 5 splits
+- **Physics Discovery**: Rediscovered moment/torque principle (force × distance)
+
+**Local RTX 3070 (Llama 3.1 8B) - In Progress:**
+- **Splits Completed**: 2 of 5 (splits 1 & 2 with 22+ samples each)
+- **Current Split**: Working on split 3 (7 samples generated so far)
+- **Status**: Experiment continuing, full results pending
+
+### Preliminary Observations
+
+1. **Execution Speed**: Local inference running steadily, generating samples at consistent pace
+2. **Resource Usage**: RTX 3070 handling Llama 3.1 8B without memory issues
+3. **Feature Generation**: Local LLM producing valid Python feature engineering code
+4. **Sample Quality**: Generated samples passing legal function validation
+
+### Consumer Hardware Viability Assessment
+
+The ongoing RTX 3070 experiment demonstrates:
+- **Accessibility**: LLM-FE can run on consumer hardware
+- **Stability**: Local inference robust enough for extended experiments
+- **Cost Efficiency**: Eliminates API costs for research/development
+- **Privacy**: Local inference for sensitive data applications
+
+Full performance comparison will be available once all 5 splits complete.
+
+---

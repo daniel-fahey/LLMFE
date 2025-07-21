@@ -10,8 +10,8 @@ from flask_cors import CORS
 import os
 
 
-# Load key
-os.environ['HF_TOKEN']='ENTER YOUR API KEY'
+# Load key from environment
+# HF_TOKEN should be set by agenix-shell
 
 
 # Arguments

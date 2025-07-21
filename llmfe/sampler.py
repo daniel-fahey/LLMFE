@@ -157,7 +157,7 @@ class LocalLLM(LLM):
         """
         super().__init__(samples_per_prompt)
 
-        url = "http://127.0.0.1:5000/completions"
+        url = "http://127.0.0.1:11434/api/generate"
         instruction_prompt = ("You are a helpful assistant tasked with discovering new features/ dropping less important feaures for the given prediction task. \
                              Complete the 'modify_features' function below, considering the physical meaning and relationships of inputs.\n\n")
         self._batch_inference = batch_inference
@@ -242,24 +242,27 @@ class LocalLLM(LLM):
         # repeat the prompt for batch inference
         repeat_prompt: int = self._samples_per_prompt if self._batch_inference else 1
         
+        # Ollama API format
         data = {
+            'model': 'llama3.1:8b',  # Adjust model name as needed
             'prompt': content,
-            'repeat_prompt': repeat_prompt,
-            'params': {
-                'do_sample': True,
-                'temperature': None,
-                'top_k': None,
-                'top_p': None,
-                'add_special_tokens': False,
-                'skip_special_tokens': True,
+            'stream': False,
+            'options': {
+                'temperature': 0.8,
+                'top_k': 30,
+                'top_p': 0.9,
+                'num_predict': 512
             }
         }
         
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(self._url, data=json.dumps(data), headers=headers)
         
-        if response.status_code == 200: #Server status code 200 indicates successful HTTP request! 
-            response = response.json()["content"]
-            
-            return response if self._batch_inference else response[0]
+        # For batch inference, make multiple requests
+        responses = []
+        for _ in range(repeat_prompt):
+            response = requests.post(self._url, json=data, headers=headers)
+            if response.status_code == 200:
+                responses.append(response.json()["response"])
+        
+        return responses if self._batch_inference else (responses[0] if responses else "")
 
